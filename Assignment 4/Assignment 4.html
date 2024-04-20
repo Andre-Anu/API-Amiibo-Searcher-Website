@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Amiibo API Demo</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #d1ffe9;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      h1 {
+        font-family: "Press Start 2P", cursive;
+        text-align: center;
+        color: #d62828;
+      }
+
+      label {
+        font-size: 20px;
+        color: #2b2d42;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 2px solid #00085a;
+        border-radius: 5px;
+      }
+
+      button {
+        background-color: #2b2d42;
+        color: #ffffff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background-color: #ef233c;
+      }
+
+      #amiiboData {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .amiiboCard {
+        background-color: #ffd000;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 5px;
+        text-align: center;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+      }
+
+      .amiiboImage {
+        width: auto;
+        height: 350px;
+        margin-bottom: 10px;
+      }
+
+      p {
+        font-size: 20px;
+        color: #2b2d42;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Amiibo API Demo</h1>
+      <p><strong>Name:</strong> André Anu Beuttenmüller Martins</p>
+      <p><strong>Student ID:</strong> 200550940</p>
+      <p><strong>Date of Submission:</strong> April 8, 2024</p>
+      <label for="gameSeriesInput">Enter Game Series:</label>
+      <input type="text" id="gameSeriesInput" placeholder="Zelda" />
+      <button onclick="fetchAmiiboData()">Fetch Amiibo Data</button>
+      <div id="amiiboData">
+        <!-- Data will be displayed here -->
+      </div>
+    </div>
+
+    <script>
+      // Function to fetch data from the Amiibo API
+      function fetchAmiiboData() {
+        const gameSeries = document.getElementById("gameSeriesInput").value;
+        fetch(
+          `https://www.amiiboapi.com/api/amiibo/?type=Figure&gameseries=${gameSeries}`
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            // Display the retrieved data on the page
+            displayAmiiboData(data);
+          })
+          .catch((error) =>
+            console.error("Error fetching Amiibo data:", error)
+          );
+      }
+
+      // Function to display Amiibo data on the page
+      function displayAmiiboData(data) {
+        const amiiboDataContainer = document.getElementById("amiiboData");
+        amiiboDataContainer.innerHTML = ""; // Clear previous data
+
+        // Display each Amiibo's name and image
+        data.amiibo.forEach((amiibo) => {
+          const amiiboCard = document.createElement("div");
+          amiiboCard.classList.add("amiiboCard");
+          const amiiboImage = document.createElement("img");
+          amiiboImage.src = amiibo.image;
+          amiiboImage.alt = amiibo.name;
+          amiiboImage.classList.add("amiiboImage");
+          const amiiboName = document.createElement("p");
+          amiiboName.textContent = amiibo.name;
+          amiiboCard.appendChild(amiiboImage);
+          amiiboCard.appendChild(amiiboName);
+          amiiboDataContainer.appendChild(amiiboCard);
+        });
+      }
+
+      // Event listener for pressing "Enter" in the search box
+      document
+        .getElementById("gameSeriesInput")
+        .addEventListener("keypress", function (event) {
+          if (event.key === "Enter") {
+            fetchAmiiboData();
+          }
+        });
+
+      // Event listener to clear the search box when clicked
+      document
+        .getElementById("gameSeriesInput")
+        .addEventListener("click", function () {
+          this.value = ""; // Clear the input field
+        });
+    </script>
+  </body>
+</html>
